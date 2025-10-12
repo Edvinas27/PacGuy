@@ -1,58 +1,76 @@
 # frozen_string_literal: true
 require 'gosu'
-require_relative 'fruit'
+require_relative 'entity'
 
 TITLE = "Rusiuotojas"
-WINDOW_HEIGHT = 640
-WINDOW_WIDTH = 800
-ITEM_SPEED = 10
+WINDOW_HEIGHT = 512
+WINDOW_WIDTH = 640
+TILE_SIZE = 32
+POS = 32
 
 class SorterGame < Gosu::Window
 
   def initialize
     super(WINDOW_WIDTH,WINDOW_HEIGHT)
     self.caption = TITLE
-    @background = Gosu::Image.new("images/background.jpg")
-    @active_fruits = []
-    @available_fruits =  [
-      { :apple => "images/fruits/Apple.png", },
-      { :banana => "images/fruits/Banana.png", },
-      { :grape => "images/fruits/Grape.png", },
-      { :orange => "images/fruits/Orange.png", },
-      { :pineapple => "images/fruits/Pineapple.png", },
+    @tile = Gosu::Image.load_tiles('images/bricks/tileset.png', TILE_SIZE, TILE_SIZE).last
+    @map = [
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1],
+      [1,0,1,0,1,1,0,1,1,1,1,1,1,1,0,1,1,1,0,1],
+      [1,0,1,0,1,1,0,0,0,0,0,0,1,1,0,1,1,0,0,1],
+      [1,0,1,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,1],
+      [1,0,0,0,1,1,0,1,0,0,0,1,1,1,1,0,1,0,1,1],
+      [1,1,0,1,1,1,1,0,0,0,0,0,1,1,0,0,1,0,0,1],
+      [1,1,0,1,1,0,1,0,0,0,0,0,1,1,0,0,1,1,0,1],
+      [1,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,1,0,1],
+      [1,1,1,0,1,0,0,0,0,0,0,1,1,1,1,1,0,1,0,1],
+      [1,0,0,0,1,1,0,1,1,1,0,1,1,1,0,0,0,1,0,1],
+      [1,0,1,1,1,1,0,1,1,1,0,0,0,0,0,1,0,0,0,1],
+      [1,0,1,1,0,0,0,1,0,1,1,1,1,1,1,1,1,0,1,1],
+      [1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1],
+      [1,1,1,1,0,1,1,0,0,0,0,1,0,0,0,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
     ]
+    @player = Entity.new
+    @x = 1
+    @y = 1
   end
 
   def update
-    @active_fruits.each(&:update)
-    if @active_fruits.last&.dropping
-      spawn_fruit
-    end
-    @active_fruits.reject! { |fruit| fruit.off_screen?(WINDOW_WIDTH, WINDOW_HEIGHT) }
-  end
-
-  def draw
-    @background.draw(0,0,0,0.3,0.4)
-    @active_fruits.each(&:draw)
   end
 
   def button_down(id)
     case id
-    when Gosu::KB_SPACE
-      if @active_fruits.empty?
-        spawn_fruit
-      else
-        @active_fruits.last.start_dropping
+    when Gosu::KB_LEFT
+      #move_left
+      @x -= 1
+    when Gosu::KB_RIGHT
+      #move_right
+      @x += 1
+    when Gosu::KB_UP
+      #move_up
+      @y -= 1
+    when Gosu::KB_DOWN
+      #move_down
+      @y += 1
+    end
+  end
+
+  def draw
+    @player.draw(@x,@y)
+
+    @map.each_with_index do |row, y|
+      row.each_with_index do |tile, x|
+        tile == 1 ? draw_tile(@tile,x,y) : draw_tile(@tile,x,y, Gosu::Color.argb(0xff_7f7f7f))  #  0xff -> full opacity_RGB 50% GRAY
       end
     end
   end
 
   private
 
-  def spawn_fruit
-    fruit_data = @available_fruits.sample
-    fruit, image_path = fruit_data.first
-    @active_fruits << Fruit.new(fruit, image_path)
+  def draw_tile(image, x, y, color = Gosu::Color::WHITE)
+    image.draw(x * TILE_SIZE, y * TILE_SIZE, 0, 1, 1, color)
   end
 end
 
