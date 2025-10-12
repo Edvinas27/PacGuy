@@ -54,18 +54,22 @@ class SorterGame < Gosu::Window
   end
 
   def move_player
-    if Gosu.button_down? Gosu::KB_LEFT
-      new_x = @player.x - 1
-      @player.move_left if will_not_collide?(new_x, @player.y)
-    elsif Gosu.button_down? Gosu::KB_RIGHT
-      new_x = @player.x + 1
-      @player.move_right if will_not_collide?(new_x, @player.y)
-    elsif Gosu.button_down? Gosu::KB_UP
-      new_y = @player.y - 1
-      @player.move_up if will_not_collide?(@player.x, new_y)
-    elsif Gosu.button_down? Gosu::KB_DOWN
-      new_y = @player.y + 1
-      @player.move_down if will_not_collide?(@player.x, new_y)
+    directions = {
+      Gosu::KB_LEFT  => [:x, -1, :move_left],
+      Gosu::KB_RIGHT => [:x, 1, :move_right],
+      Gosu::KB_UP    => [:y, -1, :move_up],
+      Gosu::KB_DOWN  => [:y, 1, :move_down]
+    }
+    directions.each do |key, value|
+      if Gosu.button_down?(key)
+        new_pos = @player.send(value[0]) + value[1]
+        if value[0] == :x
+          @player.send(value[2]) if will_not_collide?(new_pos, @player.y)
+        else
+          @player.send(value[2]) if will_not_collide?(@player.x, new_pos)
+        end
+        break
+      end
     end
   end
 end
