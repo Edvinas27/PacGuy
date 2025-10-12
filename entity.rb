@@ -2,29 +2,33 @@
 require 'gosu'
 
 class Entity
-  attr_accessor :skin
-  def initialize()
-    blob = "\xff\xff\xff\xff"  * (TILE_SIZE * TILE_SIZE)
+  WHITE_COLOR = "\xff\xff\xff\xff"
+  attr_accessor :skin, :x, :y
+  def initialize
+    blob = WHITE_COLOR  * (TILE_SIZE * TILE_SIZE)
     @skin = Gosu::Image.from_blob(TILE_SIZE,TILE_SIZE, blob)
+    @x = 1
+    @y = 1
+    @can_move = true
   end
 
   def move_left
-
+    @x -= 1
   end
 
   def move_right
-
+    @x += 1
   end
 
   def move_up
-
+    @y -= 1
   end
 
   def move_down
-
+    @y += 1
   end
 
-  def draw(x, y)
-    @skin.draw(x*TILE_SIZE,y*TILE_SIZE,TILE_SIZE)
+  def draw
+    @skin.draw(@x*TILE_SIZE,@y*TILE_SIZE,TILE_SIZE)
   end
 end

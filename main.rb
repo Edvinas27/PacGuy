@@ -1,68 +1,37 @@
 # frozen_string_literal: true
 require 'gosu'
 require_relative 'entity'
+require_relative 'maps/map'
 
 TITLE = "Rusiuotojas"
 WINDOW_HEIGHT = 512
 WINDOW_WIDTH = 640
 TILE_SIZE = 32
-POS = 32
-
+DELAY = 9.5
 class SorterGame < Gosu::Window
 
   def initialize
     super(WINDOW_WIDTH,WINDOW_HEIGHT)
     self.caption = TITLE
     @tile = Gosu::Image.load_tiles('images/bricks/tileset.png', TILE_SIZE, TILE_SIZE).last
-    @map = [
-      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-      [1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1],
-      [1,0,1,0,1,1,0,1,1,1,1,1,1,1,0,1,1,1,0,1],
-      [1,0,1,0,1,1,0,0,0,0,0,0,1,1,0,1,1,0,0,1],
-      [1,0,1,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,1],
-      [1,0,0,0,1,1,0,1,0,0,0,1,1,1,1,0,1,0,1,1],
-      [1,1,0,1,1,1,1,0,0,0,0,0,1,1,0,0,1,0,0,1],
-      [1,1,0,1,1,0,1,0,0,0,0,0,1,1,0,0,1,1,0,1],
-      [1,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,1,0,1],
-      [1,1,1,0,1,0,0,0,0,0,0,1,1,1,1,1,0,1,0,1],
-      [1,0,0,0,1,1,0,1,1,1,0,1,1,1,0,0,0,1,0,1],
-      [1,0,1,1,1,1,0,1,1,1,0,0,0,0,0,1,0,0,0,1],
-      [1,0,1,1,0,0,0,1,0,1,1,1,1,1,1,1,1,0,1,1],
-      [1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1],
-      [1,1,1,1,0,1,1,0,0,0,0,1,0,0,0,1,1,1,1,1],
-      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-    ]
+    @map = Map.level1
     @player = Entity.new
-    @x = 1
-    @y = 1
+    @frames = 0
   end
 
   def update
-  end
-
-  def button_down(id)
-    case id
-    when Gosu::KB_LEFT
-      #move_left
-      @x -= 1
-    when Gosu::KB_RIGHT
-      #move_right
-      @x += 1
-    when Gosu::KB_UP
-      #move_up
-      @y -= 1
-    when Gosu::KB_DOWN
-      #move_down
-      @y += 1
+    @frames += 1
+    if @frames > DELAY && moving_input_down?
+      move_player
+      @frames = 0
     end
   end
 
   def draw
-    @player.draw(@x,@y)
-
+    @player.draw
     @map.each_with_index do |row, y|
       row.each_with_index do |tile, x|
-        tile == 1 ? draw_tile(@tile,x,y) : draw_tile(@tile,x,y, Gosu::Color.argb(0xff_7f7f7f))  #  0xff -> full opacity_RGB 50% GRAY
+        tile == 1 ? draw_tile(@tile,x,y) : draw_tile(@tile,x,y, Gosu::Color::GRAY)
       end
     end
   end
@@ -71,6 +40,33 @@ class SorterGame < Gosu::Window
 
   def draw_tile(image, x, y, color = Gosu::Color::WHITE)
     image.draw(x * TILE_SIZE, y * TILE_SIZE, 0, 1, 1, color)
+  end
+
+  def will_not_collide?(x,y)
+    @map[y][x] != 1
+  end
+
+  def moving_input_down?
+      Gosu.button_down?(Gosu::KB_LEFT) ||
+      Gosu.button_down?(Gosu::KB_RIGHT) ||
+      Gosu.button_down?(Gosu::KB_UP) ||
+      Gosu.button_down?(Gosu::KB_DOWN)
+  end
+
+  def move_player
+    if Gosu.button_down? Gosu::KB_LEFT
+      new_x = @player.x - 1
+      @player.move_left if will_not_collide?(new_x, @player.y)
+    elsif Gosu.button_down? Gosu::KB_RIGHT
+      new_x = @player.x + 1
+      @player.move_right if will_not_collide?(new_x, @player.y)
+    elsif Gosu.button_down? Gosu::KB_UP
+      new_y = @player.y - 1
+      @player.move_up if will_not_collide?(@player.x, new_y)
+    elsif Gosu.button_down? Gosu::KB_DOWN
+      new_y = @player.y + 1
+      @player.move_down if will_not_collide?(@player.x, new_y)
+    end
   end
 end
 
