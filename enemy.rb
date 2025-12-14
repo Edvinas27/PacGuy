@@ -7,17 +7,14 @@ class Enemy < Entity
   SPAWN_X = 18
   SPAWN_Y = 13
 
-  def initialize
+  attr_accessor :strategy, :x, :y
+
+  def initialize(strategy)
     super(SOLID_RED, SPAWN_X, SPAWN_Y)
+    @strategy = strategy
   end
 
   def chase(player, walkable)
-    start = [@x, @y]
-    goal = [player.x, player.y]
-    path = AStar.find_path(start, goal, walkable)
-    unless path.empty?
-      next_step = path.first
-      @x, @y = next_step
-    end
+    @strategy.execute(self, player, walkable)
   end
 end

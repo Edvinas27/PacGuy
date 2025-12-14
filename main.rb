@@ -6,6 +6,7 @@ require_relative 'goal'
 require_relative 'factories/goal_factory'
 require_relative 'player'
 require_relative 'enemy'
+require_relative 'strategies/chase_strategy'
 
 TITLE = "PacDude"
 WINDOW_HEIGHT = 512
@@ -23,7 +24,7 @@ class SorterGame < Gosu::Window
     @tile = Gosu::Image.load_tiles('images/bricks/tileset.png', TILE_SIZE, TILE_SIZE).last
     @map = Map.level1
     @player = Player.new
-    @enemy = Enemy.new
+    @enemy = Enemy.new(ChaseStrategy.new)
     @goals = GoalFactory.create_random_goal(@map, 2)
   end
 
