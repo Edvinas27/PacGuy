@@ -4,7 +4,7 @@ require_relative 'entities/entity'
 require_relative 'maps/map'
 require_relative 'entities/goal'
 require_relative 'factories/goal_factory'
-require_relative 'player'
+require_relative 'entities/player'
 require_relative 'entities/enemy'
 require_relative 'strategies/chase_strategy'
 
