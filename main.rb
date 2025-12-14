@@ -7,13 +7,8 @@ require_relative 'factories/goal_factory'
 require_relative 'entities/player'
 require_relative 'entities/enemy'
 require_relative 'strategies/chase_strategy'
+require_relative 'utils/constants'
 
-TITLE = "PacDude"
-WINDOW_HEIGHT = 512
-WINDOW_WIDTH = 640
-TILE_SIZE = 32
-DELAY = 9.5
-ENEMY_DELAY = 12
 class SorterGame < Gosu::Window
 
   def initialize
