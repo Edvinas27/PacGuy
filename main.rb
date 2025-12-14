@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 require 'gosu'
-require_relative 'entity'
+require_relative 'entities/entity'
 require_relative 'maps/map'
-require_relative 'goal'
+require_relative 'entities/goal'
 require_relative 'factories/goal_factory'
 require_relative 'player'
-require_relative 'enemy'
+require_relative 'entities/enemy'
 require_relative 'strategies/chase_strategy'
 
 TITLE = "PacDude"

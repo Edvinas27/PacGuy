@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'a_star'
+require_relative '../a_star'
 
 class Enemy < Entity
   SOLID_RED = "\xff\x00\x00\xff"

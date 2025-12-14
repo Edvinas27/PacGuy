@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 require_relative '../a_star'
-require_relative '../strategies/enemy_strategy'
+require_relative '../strategies/strategy'
 
-class ChaseStrategy < EnemyStrategy
+class ChaseStrategy < Strategy
   def execute(enemy, player, walkable)
     start = [enemy.x, enemy.y]
     goal = [player.x, player.y]
